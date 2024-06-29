@@ -1,6 +1,6 @@
 # shatranj
 
-An Indian Chess app with no hand-holding.
+The classical Indian game with no hand-holding.
 
 ## Getting Started
 
