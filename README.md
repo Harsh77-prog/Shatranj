@@ -1,6 +1,6 @@
 # shatranj
 
-A new Flutter project.
+An Indian Chess app with no hand-holding.
 
 ## Getting Started
 
