@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -63,7 +62,8 @@ class PlayerColorRadioButton extends StatelessWidget {
           ),
           contentPadding: EdgeInsets.zero,
           tileColor: Colors.transparent,
-          controlAffinity: ListTileControlAffinity.leading, // Align the radio button to the start
+          controlAffinity: ListTileControlAffinity
+              .leading, // Align the radio button to the start
           groupValue: groupValue,
           onChanged: onChanged,
         ),
@@ -71,9 +71,6 @@ class PlayerColorRadioButton extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class GameLevelRadioButton extends StatelessWidget {
   const GameLevelRadioButton({
@@ -135,22 +132,15 @@ class GameLevelRadioButton extends StatelessWidget {
           ),
           contentPadding: EdgeInsets.zero,
           tileColor: Colors.transparent,
-          controlAffinity: ListTileControlAffinity.leading, // Align the radio button to the start
+          controlAffinity: ListTileControlAffinity
+              .leading, // Align the radio button to the start
           groupValue: groupValue,
           onChanged: onChanged,
         ),
       ),
     );
   }
-
 }
-
-
-
-
-
-
-
 
 class BuildCustomTime extends StatelessWidget {
   const BuildCustomTime({
@@ -187,7 +177,8 @@ class BuildCustomTime extends StatelessWidget {
           child: Container(
             height: 40,
             decoration: BoxDecoration(
-              border: Border.all(width: 1.5, color: Color.fromARGB(255, 245, 245, 245)),
+              border: Border.all(
+                  width: 1.5, color: Color.fromARGB(255, 245, 245, 245)),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
@@ -220,7 +211,6 @@ class BuildCustomTime extends StatelessWidget {
   }
 }
 
-
 class HaveAccountWidget extends StatelessWidget {
   const HaveAccountWidget({
     Key? key,
@@ -228,8 +218,10 @@ class HaveAccountWidget extends StatelessWidget {
     required this.labelAction,
     required this.onPressed,
     this.padding = const EdgeInsets.all(8.0), // Add default padding
-    this.textColor = const Color.fromARGB(255, 245, 245, 245), // Add default text color
-    this.buttonColor = const Color.fromARGB(255, 245, 245, 245), // Add default button color
+    this.textColor =
+        const Color.fromARGB(255, 245, 245, 245), // Add default text color
+    this.buttonColor =
+        const Color.fromARGB(255, 245, 245, 245), // Add default button color
   }) : super(key: key);
 
   final String label;
@@ -270,15 +262,10 @@ class HaveAccountWidget extends StatelessWidget {
   }
 }
 
-
-
-
-
-
 showSnackBar({required BuildContext context, required String content}) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
-      margin: EdgeInsets.only(bottom: 100.0),
-      closeIconColor: Color.fromARGB(255, 199, 149, 100),
+      margin: const EdgeInsets.only(bottom: 100.0),
+      closeIconColor: const Color.fromARGB(255, 199, 149, 100),
       content: Text(content)));
 }
