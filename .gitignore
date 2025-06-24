@@ -11,7 +11,13 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-
+# Files
+pubspec.lock
+pubspec.yaml
+firebase-debug.log
+.flutter-plugins-dependencies
+analysis_options.yaml
+build
 # IntelliJ related
 *.iml
 *.ipr
