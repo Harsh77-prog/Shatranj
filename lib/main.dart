@@ -12,19 +12,10 @@ import 'main_screens/home_screen.dart';
 import 'main_screens/settings_screen.dart';
 
 void main() async {
-  // await SentryFlutter.init(
-  //       (options) {
-  //     options.dsn = 'https://d919bc50a27a2220c2f1e043043917f6@o4507265518010368.ingest.us.sentry.io/4507265522597888';
-  //     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-  //     // We recommend adjusting this value in production.
-  //     options.tracesSampleRate = 0.01;
-  //     // The sampling rate for profiling is relative to tracesSampleRate
-  //     // Setting to 1.0 will profile 100% of sampled transactions:
-  //     options.profilesSampleRate = 1.0;
-  //   },
-  //   // appRunner: () => runApp(MyApp()),
-  // );
-
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (_) => GameProvider()),
