@@ -2,6 +2,11 @@
 
 Shatranj is a feature-rich chess app built with Flutter, allowing users to play against the renowned Stockfish chess engine—one of the toughest AIs in the world. This project represents my first end-to-end product that went live in production, marking a significant milestone in my journey as both a developer and a product manager.
 
+# NOTE: 
+<img src="https://media1.tenor.com/m/wtKdHPcZXsEAAAAd/the-office-office.gif">
+Shatranj is off the PlayStore for now due to some Google Play Console issues. I currently am working on the Version 2. Stay Tuned!
+
+
 ##  Project Highlights
 
 - **Product Management**: As the sole Product Manager, I led all phases of the product lifecycle—from hypothesis testing, through alpha and beta testing, to launch, following best practices and requirements as set by the Google Play Store.
