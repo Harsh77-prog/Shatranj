@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shatranj/providers/game_provider.dart';
@@ -6,6 +7,7 @@ import 'authentication/landing_screen.dart';
 import 'authentication/login_screen.dart';
 import 'authentication/sign_up_screen.dart';
 import 'constants.dart';
+import 'firebase_options.dart';
 import 'main_screens/game_screen.dart';
 import 'main_screens/game_time_screen.dart';
 import 'main_screens/home_screen.dart';
@@ -36,6 +38,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
+
       //home: const HomeScreen(),
       initialRoute: Constants.loginScreen,
       routes: {
