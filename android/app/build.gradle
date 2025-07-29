@@ -32,9 +32,9 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    ndkVersion = "25.1.8937393"
     namespace "com.ictinus.shatranj"
     compileSdk flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

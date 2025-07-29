@@ -1,8 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import "package:provider/provider.dart";
 import 'package:shatranj/providers/game_provider.dart';
-
 import 'authentication/landing_screen.dart';
 import 'authentication/login_screen.dart';
 import 'authentication/sign_up_screen.dart';

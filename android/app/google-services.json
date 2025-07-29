@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "293794856013",
-    "project_id": "shatranj-6d00c",
-    "storage_bucket": "shatranj-6d00c.firebasestorage.app"
+    "project_number": "896712593730",
+    "project_id": "shatranj-f2744",
+    "storage_bucket": "shatranj-f2744.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:293794856013:android:433384653828211a2c7004",
+        "mobilesdk_app_id": "1:896712593730:android:4cb73bf1fb4fb98cb9f8db",
         "android_client_info": {
           "package_name": "com.ictinus.shatranj"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC_XgMVUcrcUndb0ZStxlrLMTmNm-qtbp0"
+          "current_key": "AIzaSyCUG9tF1M1LnuvoGl0H9BbSxuFBlMWWTUs"
         }
       ],
       "services": {

@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -49,20 +40,49 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static final FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC_XgMVUcrcUndb0ZStxlrLMTmNm-qtbp0',
-    appId: '1:293794856013:android:433384653828211a2c7004',
-    messagingSenderId: '293794856013',
-    projectId: 'shatranj-6d00c',
-    storageBucket: 'shatranj-6d00c.firebasestorage.app',
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAsiMDq_yrdu6qUMYpu6vqoEKDUV_jVvDo',
+    appId: '1:896712593730:web:cb8843198084e738b9f8db',
+    messagingSenderId: '896712593730',
+    projectId: 'shatranj-f2744',
+    authDomain: 'shatranj-f2744.firebaseapp.com',
+    storageBucket: 'shatranj-f2744.firebasestorage.app',
+    measurementId: 'G-TZ9LRK7TY0',
   );
 
-  static final FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDIesKL8prBCZkRztf3kIxlMsa-txTjkmc',
-    appId: '1:293794856013:ios:84b79ec0515ba1012c7004',
-    messagingSenderId: '293794856013',
-    projectId: 'shatranj-6d00c',
-    storageBucket: 'shatranj-6d00c.firebasestorage.app',
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyCUG9tF1M1LnuvoGl0H9BbSxuFBlMWWTUs',
+    appId: '1:896712593730:android:4cb73bf1fb4fb98cb9f8db',
+    messagingSenderId: '896712593730',
+    projectId: 'shatranj-f2744',
+    storageBucket: 'shatranj-f2744.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBMQSnWXpIuOBcEh4lS8S8Blratp0Z-QII',
+    appId: '1:896712593730:ios:daba77f5b580783fb9f8db',
+    messagingSenderId: '896712593730',
+    projectId: 'shatranj-f2744',
+    storageBucket: 'shatranj-f2744.firebasestorage.app',
     iosBundleId: 'com.ictinus.shatranj',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBMQSnWXpIuOBcEh4lS8S8Blratp0Z-QII',
+    appId: '1:896712593730:ios:daba77f5b580783fb9f8db',
+    messagingSenderId: '896712593730',
+    projectId: 'shatranj-f2744',
+    storageBucket: 'shatranj-f2744.firebasestorage.app',
+    iosBundleId: 'com.ictinus.shatranj',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAsiMDq_yrdu6qUMYpu6vqoEKDUV_jVvDo',
+    appId: '1:896712593730:web:563a42ce2f751077b9f8db',
+    messagingSenderId: '896712593730',
+    projectId: 'shatranj-f2744',
+    authDomain: 'shatranj-f2744.firebaseapp.com',
+    storageBucket: 'shatranj-f2744.firebasestorage.app',
+    measurementId: 'G-8RTM48VL8F',
   );
 }
