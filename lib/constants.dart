@@ -9,6 +9,7 @@ class Constants {
   static const String gameTimeScreen = '/gameTimeScreen';
   static const String loginScreen = '/loginScreen';
   static const String signUpScreen = '/signUpScreen';
+  static const String userdetails = '/userdetails';
   static const String userInformationScreen = '/userInformationScreen';
 
   static const String custom = 'Custom';

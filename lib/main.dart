@@ -1,22 +1,19 @@
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import "package:provider/provider.dart";
 import 'package:shatranj/providers/game_provider.dart';
-import 'authentication/landing_screen.dart';
-import 'authentication/login_screen.dart';
-import 'authentication/sign_up_screen.dart';
+import 'main_screens/landing_screen.dart';
 import 'constants.dart';
-import 'firebase_options.dart';
+
 import 'main_screens/game_screen.dart';
 import 'main_screens/game_time_screen.dart';
 import 'main_screens/home_screen.dart';
-import 'main_screens/settings_screen.dart';
+
+import 'main_screens/userdetail.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (_) => GameProvider()),
@@ -39,15 +36,14 @@ class MyApp extends StatelessWidget {
       ),
 
       //home: const HomeScreen(),
-      initialRoute: Constants.loginScreen,
+      initialRoute: Constants.homeScreen,
       routes: {
         Constants.homeScreen: (context) => const HomeScreen(),
         Constants.gameScreen: (context) => const GameScreen(),
-        Constants.settingScreen: (context) => const SettingsScreen(),
+        Constants.userdetails: (context) => const UserDetailPage(),
+
         // Constants.aboutScreen: (context) => const AboutScreen(),
         Constants.gameTimeScreen: (context) => const GameTimeScreen(),
-        Constants.loginScreen: (context) => const LoginScreen(),
-        Constants.signUpScreen: (context) => const SignUpScreen(),
         Constants.landingScreen: (context) => const LandingScreen(),
       },
     );

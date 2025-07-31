@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../constants.dart';
 import '../service/assets_manager.dart';
 
@@ -15,34 +14,23 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
-    navigateAfterDelay();
+
+    // Navigate after the first frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacementNamed(context, Constants.homeScreen);
+    });
   }
-
-  void navigateAfterDelay() async {
-    // Wait for 3 seconds
-    await Future.delayed(Duration(seconds: 3));
-
-    // Navigate to the home screen
-    navigateToHome();
-  }
-
-  void navigateToHome() {
-    Navigator.pushReplacementNamed(context, Constants.homeScreen);
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 33, 33, 33),
+      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Material(
               elevation: 10,
-              // shadowColor: Color.fromARGB(255, 248, 248, 245).withOpacity(1),
               shape: const CircleBorder(),
               child: Container(
                 width: 60,
@@ -65,30 +53,19 @@ class _LandingScreenState extends State<LandingScreen> {
                 ),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
               'SHATRANJ',
               style: GoogleFonts.lato(
                 color: const Color.fromARGB(255, 232, 232, 232),
-                fontSize: 60, // Adjust font size as needed
+                fontSize: 60,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-
-
           ],
         ),
       ),
     );
   }
-
-  void navigate({required bool isSignedIn}) {
-    if (isSignedIn) {
-      Navigator.pushReplacementNamed(context, Constants.homeScreen);
-    } else {
-      Navigator.pushReplacementNamed(context, Constants.loginScreen);
-    }
-  }
 }
-

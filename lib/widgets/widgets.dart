@@ -25,8 +25,8 @@ class PlayerColorRadioButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
-              Color.fromARGB(255, 232, 232, 232),
-              Color.fromARGB(255, 232, 232, 232),
+              Color.fromARGB(255, 6, 6, 6),
+              Color.fromARGB(255, 77, 77, 77),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -49,9 +49,9 @@ class PlayerColorRadioButton extends StatelessWidget {
           title: Text(
             title,
             style: GoogleFonts.lato(
-              color: Color.fromARGB(255, 33, 33, 33),
+              color:Colors.cyanAccent,
               fontWeight: FontWeight.bold,
-              fontSize: 30,
+              fontSize: 20,
             ),
           ),
           value: value,
@@ -95,8 +95,8 @@ class GameLevelRadioButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
-              Color.fromARGB(255, 232, 232, 232),
-              Color.fromARGB(255, 232, 232, 232),
+              Color.fromARGB(255, 6, 6, 6),
+              Color.fromARGB(255, 77, 77, 77),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -119,9 +119,9 @@ class GameLevelRadioButton extends StatelessWidget {
           title: Text(
             capitalizedTitle,
             style: GoogleFonts.lato(
-              color: Color.fromARGB(255, 33, 33, 33),
+              color:Colors.cyanAccent,
               fontWeight: FontWeight.bold,
-              fontSize: 30,
+              fontSize: 20,
             ),
           ),
           value: value,
@@ -147,7 +147,7 @@ class BuildCustomTime extends StatelessWidget {
     required this.time,
     required this.onLeftArrowClicked,
     required this.onRightArrowClicked,
-    this.arrowColor = Colors.white,
+    this.arrowColor = Colors.cyanAccent,
     this.containerColor = Colors.transparent,
   }) : super(key: key);
 
@@ -177,7 +177,7 @@ class BuildCustomTime extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               border: Border.all(
-                  width: 1.5, color: Color.fromARGB(255, 245, 245, 245)),
+                  width: 1.5, color: Colors.cyanAccent),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
@@ -187,8 +187,8 @@ class BuildCustomTime extends StatelessWidget {
                   time,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
-                    fontSize: 20,
-                    color: Color.fromARGB(255, 245, 245, 245),
+                    fontSize: 15,
+                    color: Colors.cyanAccent,
                   ),
                 ),
               ),
@@ -218,7 +218,7 @@ class HaveAccountWidget extends StatelessWidget {
     required this.onPressed,
     this.padding = const EdgeInsets.all(8.0), // Add default padding
     this.textColor =
-        const Color.fromARGB(255, 245, 245, 245), // Add default text color
+        const Color.fromARGB(255, 0, 255, 255), // Add default text color
     this.buttonColor =
         const Color.fromARGB(255, 245, 245, 245), // Add default button color
   }) : super(key: key);

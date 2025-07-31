@@ -20,9 +20,9 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
 
     print('VS VALUE: ${gameProvider.vsComputer}');
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+      backgroundColor:Colors.black,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+        backgroundColor:Colors.black,
         automaticallyImplyLeading: false,
         title: Center(
           child: Row(
@@ -34,7 +34,8 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
                   color: Color.fromARGB(255, 232, 232, 232),
                 ),
                 onPressed: () {
-                  Navigator.pop(context); // Navigate back to the previous screen
+                  Navigator.pop(
+                      context); // Navigate back to the previous screen
                 },
               ),
               const Spacer(),
@@ -58,12 +59,41 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'GAME TYPE',
-              style: GoogleFonts.lato(
-                fontSize: 70,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 232, 232, 232),
+            const SizedBox(height: 30),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [Colors.cyan, Colors.cyanAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds),
+              child: Text(
+                'GAME TYPE',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.orbitron(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  // Gets masked by shader
+                  letterSpacing: 2,
+                  height: 1.3,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: Container(
+                height: 4,
+                width: 200,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.cyan, Colors.cyanAccent],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -74,61 +104,68 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
                   builder: (context, constraints) {
                     // Determine the number of columns and aspect ratio based on the screen size
                     int crossAxisCount = constraints.maxWidth > 600 ? 1 : 1;
-                    double childAspectRatio = constraints.maxWidth > 600 ? 3 : 4;
+                    double childAspectRatio =
+                        constraints.maxWidth > 600 ? 3 : 4;
 
                     return SingleChildScrollView(
-                      child: GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        mainAxisSpacing: 20,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: childAspectRatio,
-                        crossAxisCount: crossAxisCount,
-                        children: [
-                          buildGameType(
-                            label: 'BULLET',
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) => buildSheet(label: 'Bullet'),
-                              );
-                            },
-                            gameTime: '',
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.black, Color(0xff323232)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          buildGameType(
-                            label: 'BLITZ',
-                            onTap: () {
-                              showModalBottomSheet(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          mainAxisSpacing: 20,
+                          crossAxisSpacing: 10,
+                          childAspectRatio: childAspectRatio,
+                          crossAxisCount: crossAxisCount,
+                          children: [
+                            buildGradientGameType(
+                              context: context,
+                              label: 'BULLET',
+                              onTap: () => showModalBottomSheet(
                                 context: context,
-                                builder: (context) => buildSheet(label: 'Blitz'),
-                              );
-                            },
-                            gameTime: '',
-                          ),
-                          buildGameType(
-                            label: 'RAPID',
-                            onTap: () {
-                              showModalBottomSheet(
+                                builder: (context) =>
+                                    buildSheet(label: 'Bullet'),
+                              ),
+                            ),
+                            buildGradientGameType(
+                              context: context,
+                              label: 'BLITZ',
+                              onTap: () => showModalBottomSheet(
                                 context: context,
-                                builder: (context) => buildSheet(label: 'Rapid'),
-                              );
-                            },
-                            gameTime: '',
-                          ),
-                          buildGameType(
-                            label: 'CLASSICAL',
-                            onTap: () {
-                              showModalBottomSheet(
+                                builder: (context) =>
+                                    buildSheet(label: 'Blitz'),
+                              ),
+                            ),
+                            buildGradientGameType(
+                              context: context,
+                              label: 'RAPID',
+                              onTap: () => showModalBottomSheet(
                                 context: context,
-                                builder: (context) => buildSheet(label: 'Classical'),
-                              );
-                            },
-                            gameTime: '',
-                          ),
-                          buildGameType(
-                            label: 'CUSTOM',
-                            onTap: () {
-                              Navigator.push(
+                                builder: (context) =>
+                                    buildSheet(label: 'Rapid'),
+                              ),
+                            ),
+                            buildGradientGameType(
+                              context: context,
+                              label: 'CLASSICAL',
+                              onTap: () => showModalBottomSheet(
+                                context: context,
+                                builder: (context) =>
+                                    buildSheet(label: 'Classical'),
+                              ),
+                            ),
+                            buildGradientGameType(
+                              context: context,
+                              label: 'CUSTOM',
+                              onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const GameStartUpScreen(
@@ -136,11 +173,10 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
                                     gameTime: '',
                                   ),
                                 ),
-                              );
-                            },
-                            gameTime: '',
-                          ),
-                        ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -155,41 +191,101 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
 
   Widget buildInfoSheet() {
     return FractionallySizedBox(
-      heightFactor: 0.6, // 60% of the screen height
+      heightFactor: 0.6,
       child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 33, 33, 33),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Center(
-                  child: Text(
-                    'GAME TYPE',
-                    style: GoogleFonts.lato(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 232, 232, 232),
-                    ),
-                  ),
+          backgroundColor: Colors.transparent,
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.black.withOpacity(0.9),
+                  Colors.grey.shade900.withOpacity(0.95),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(30)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.purpleAccent.withOpacity(0.3),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                  offset: const Offset(0, -2),
                 ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Text(
-                      'MASTER ALL THE FORMATS OF CHESS GAMES SUCH AS BULLET, BLITZ, RAPID, CLASSICAL, AND CUSTOM GAMES. '
-                          'SELECT A GAME TYPE TO START PLAYING. EACH TYPE OFFERS DIFFERENT TIME CONTROLS SUITED TO VARIOUS PLAY STYLES. ENJOY YOUR GAME!',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        color: const Color.fromARGB(255, 232, 232, 232),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+
+                  // Glowing Header
+                  Center(
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Colors.cyan, Colors.cyanAccent],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds),
+                      child: Text(
+                        'GAME TYPE',
+                        style: GoogleFonts.orbitron(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 2,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 5),
+
+                  // Moving glow bar under title
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.cyan, Colors.cyanAccent],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        'Master all formats of chess including Bullet, Blitz, Rapid, Classical, and Custom Games.\n\n'
+                        '⚡ Bullet: Ultra-fast games for adrenaline lovers.\n'
+                        '🔥 Blitz: Fast and furious tactical battles.\n'
+                        '⏱️ Rapid: Balanced games with deeper strategy.\n'
+                        '🎯 Classical: Slow-paced for deep thinkers.\n'
+                        '🎛️ Custom: Set your own pace and rules.\n\n'
+                        'Choose your style. Let the game begin!',
+                        style: GoogleFonts.lato(
+                          fontSize: 16,
+                          color: Colors.grey[300],
+                          height: 1.5,
+                          wordSpacing: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -202,57 +298,88 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
     final List<String> filteredGameTimes = getFilteredGameTimes(label);
 
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 33, 33, 33),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(
-                  'TIME',
-                  style: GoogleFonts.lato(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 232, 232, 232),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 15,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: 16 / 9,
-                  ),
-                  itemCount: filteredGameTimes.length,
-                  itemBuilder: (context, index) {
-                    final String customLabel = customNames[index];
-                    final String gameTime = filteredGameTimes[index];
-
-                    return buildGameType(
-                      label: customLabel,
-                      gameTime: gameTime,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GameStartUpScreen(
-                              isCustomTime: label == 'CUSTOM',
-                              gameTime: gameTime,
-                            ),
+        backgroundColor: Colors.transparent,
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff000000), Color(0xff222222)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Glowing Title
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: [Colors.cyan, Colors.cyanAccent],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds),
+                    child: Text(
+                      'TIME',
+                      style: GoogleFonts.orbitron(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 2,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 8,
+                            color: Colors.white70,
+                            offset: Offset(0, 2),
                           ),
-                        );
-                      },
-                    );
-                  },
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 20),
+
+                // Grid of Game Time Options
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 14,
+                      childAspectRatio: 16 / 9,
+                    ),
+                    itemCount: filteredGameTimes.length,
+                    itemBuilder: (context, index) {
+                      final String customLabel = customNames[index];
+                      final String gameTime = filteredGameTimes[index];
+
+                      return buildGameTypeCard(
+                        context: context,
+                        label: customLabel,
+                        gameTime: gameTime,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GameStartUpScreen(
+                                isCustomTime: label == 'CUSTOM',
+                                gameTime: gameTime,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -270,7 +397,12 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
       case 'Classical':
         return ['30+0', '45+45', '60+0'];
       default:
-        return ['Default Name 1', 'Default Name 2', 'Default Name 3', 'Default Name 4'];
+        return [
+          'Default Name 1',
+          'Default Name 2',
+          'Default Name 3',
+          'Default Name 4'
+        ];
     }
   }
 
@@ -281,53 +413,58 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
       'Rapid': ['10+0', '15+10', '25+0'],
       'Classical': ['30+0', '45+45', '60+0'],
     };
-    return gameTimes[label] ?? ['Default Time 1', 'Default Time 2', 'Default Time 3', 'Default Time 4'];
+    return gameTimes[label] ??
+        [
+          'Default Time 1',
+          'Default Time 2',
+          'Default Time 3',
+          'Default Time 4'
+        ];
   }
 
-  Widget buildGameType({
+  Widget buildGameTypeCard({
+    required BuildContext context,
     required String label,
-    required VoidCallback onTap,
     required String gameTime,
+    required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 232, 232, 232), // Set the background color of the container
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
+          gradient: LinearGradient(
+            colors: [Colors.cyan, Colors.cyanAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
             BoxShadow(
-              color: Color.fromARGB(255, 33, 33, 33),
-              offset: Offset(7, 7),
-              blurRadius: 15,
-            ),
-            BoxShadow(
-              color: Color.fromARGB(255, 33, 33, 33),
-              offset: Offset(-7, -7),
-              blurRadius: 15,
+              color: Colors.blueAccent.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
+          border: Border.all(
+            width: 2,
+            color: Colors.white.withOpacity(0.3),
+          ),
         ),
-        child: Material(
-          color: Colors.transparent,
-          elevation: 10,
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(255, 232, 232, 232),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  label,
-                  style: GoogleFonts.lato(
-                    color: const Color.fromARGB(255, 33, 33, 33), // Text color
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+        child: Center(
+          child: Text(
+            '$label\n$gameTime',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              height: 1.4,
+              shadows: const [
+                Shadow(
+                  blurRadius: 4,
+                  color: Colors.black26,
+                  offset: Offset(1, 1),
+                )
               ],
             ),
           ),
@@ -335,4 +472,54 @@ class _GameTimeScreenState extends State<GameTimeScreen> {
       ),
     );
   }
+}
+
+Widget buildGradientGameType({
+  required BuildContext context,
+  required String label,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.cyan, Colors.cyanAccent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          width: 2,
+          color: Colors.white.withOpacity(0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurpleAccent.withOpacity(0.6),
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(2, 4),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            shadows: [
+              Shadow(
+                blurRadius: 10,
+                color: Colors.white,
+                offset: Offset(1, 1),
+              )
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

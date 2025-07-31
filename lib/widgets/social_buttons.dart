@@ -35,7 +35,7 @@ class SocialButton extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.lato(
-              color: const Color.fromARGB(255, 232, 232, 232),
+              color: const Color.fromARGB(255, 0, 255, 255),
               fontWeight: FontWeight.bold,
             ),
           ),

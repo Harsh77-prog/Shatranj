@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squares/squares.dart';
 import 'package:stockfish/stockfish.dart';
 
@@ -23,9 +24,12 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   late Stockfish stockfish;
   final Random random = Random();
+  String _userName = 'Player';     // <-- default fallback
+  String? _userAvatarPath;
 
   @override
   void initState() {
+    _loadUserProfile();
     stockfish = Stockfish();
     final gameProvider = context.read<GameProvider>();
     gameProvider.resetGame(newGame: false);
@@ -42,6 +46,22 @@ class _GameScreenState extends State<GameScreen> {
     super.dispose();
   }
 
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final name = prefs.getString('userName')?.trim();
+      final avatar = prefs.getString('userAvatar');
+
+      if (!mounted) return;
+      setState(() {
+        _userName = (name != null && name.isNotEmpty) ? name : 'Player';
+        _userAvatarPath = (avatar != null && avatar.isNotEmpty) ? avatar : null;
+      });
+    } catch (_) {
+      // keep defaults if anything fails
+    }
+  }
   void letOtherPlayerPlayFirst() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final gameProvider = context.read<GameProvider>();
@@ -193,9 +213,12 @@ class _GameScreenState extends State<GameScreen> {
   }
 
 
+
+
   @override
   Widget build(BuildContext context) {
     final gameProvider = context.read<GameProvider>();
+
 
     return WillPopScope(
       onWillPop: () async {
@@ -205,6 +228,49 @@ class _GameScreenState extends State<GameScreen> {
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 33, 33, 33),
         appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Material(
+                elevation: 10,
+                // shadowColor: Color.fromARGB(255, 248, 248, 245).withOpacity(1),
+                shape: CircleBorder(),
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 232, 232, 232),
+                        Color.fromARGB(255, 232, 232, 232),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: AssetImage(AssetsManager.chessIcon),
+                  ),
+                ),
+              ),
+              SizedBox(width: 5),
+              Text(
+                'SHATRANJ',
+                style: GoogleFonts.lato(
+                  color: Colors.cyanAccent,
+                  fontSize: 20, // Adjust font size as needed
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+
+            ],
+          ),
+
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back,
@@ -217,22 +283,18 @@ class _GameScreenState extends State<GameScreen> {
           backgroundColor: Color.fromARGB(255, 33, 33, 33),
 
           actions: [
-            // IconButton(
-            //   onPressed: () {
-            //     gameProvider.resetGame(newGame: false);
-            //   },
-            //   icon: const Icon(Icons.start, color: Color.fromARGB(255, 76, 50, 35)),
-            // ),
             IconButton(
               onPressed: () {
                 gameProvider.flipTheBoard();
               },
-              icon: const Icon(Icons.rotate_left, color: Color.fromARGB(255, 232, 232, 232)),
+              icon: const Icon(Icons.crop_rotate_outlined, color: Color.fromARGB(255, 232, 232, 232)),
             ),
           ],
         ),
         body: Consumer<GameProvider>(
           builder: (context, gameProvider, child) {
+            bool isOpponentsTurn = gameProvider.state.state == PlayState.theirTurn;
+            bool isUsersTurn = gameProvider.state.state == PlayState.ourTurn;
             String whitesTimer = getTimerToDisplay(
               gameProvider: gameProvider,
               isUser: true,
@@ -244,77 +306,52 @@ class _GameScreenState extends State<GameScreen> {
             return Center(
               child: Column(
                 children: [
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Material(
-                        elevation: 10,
-                        // shadowColor: Color.fromARGB(255, 248, 248, 245).withOpacity(1),
-                        shape: CircleBorder(),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                Color.fromARGB(255, 232, 232, 232),
-                                Color.fromARGB(255, 232, 232, 232),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF00FFE1),
+                            Color(0xFF3A3A3A),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.all(2.5),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: isOpponentsTurn
+                              ? Colors.blueAccent.withOpacity(0.7) // 🔵 Highlight
+                              : const Color.fromARGB(255, 0, 0, 0),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromRGBO(25, 25, 25, 1.0),
+                              offset: Offset(-15, -15),
+                              blurRadius: 30,
                             ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: AssetImage(AssetsManager.chessIcon),
-                          ),
+                            BoxShadow(
+                              color: Color.fromRGBO(60, 60, 60, 1.0),
+                              offset: Offset(15, 15),
+                              blurRadius: 30,
+                            ),
+                          ],
+                        ),
+
+                          child: showOpponentsData(
+                            gameProvider: gameProvider,
+                            timeToShow: blacksTimer,
+
                         ),
                       ),
-                      SizedBox(width: 10),
-                      Text(
-                        'SHATRANJ',
-                        style: GoogleFonts.lato(
-                          color: const Color.fromARGB(255, 232, 232, 232),
-                          fontSize: 40, // Adjust font size as needed
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                    ),
 
-
-                    ],
                   ),
 
-
-
-                  const SizedBox(height: 30,),
-                  // opponents data
-                  Container(
-                    height: 70,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10), // Add rounded corners
-                      color: const Color.fromARGB(255, 232, 232, 232), // Set the background color of the container
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromRGBO(25, 25, 25, 1.0),
-                          offset: Offset(-15, -15),
-                          blurRadius: 30,
-                        ),
-                        BoxShadow(
-                          color: Color.fromRGBO(60, 60, 60, 1.0),
-                          offset: Offset(15, 15),
-                          blurRadius: 30,
-                        ),
-                      ],
-                    ),
-                    child: showOpponentsData(
-                      gameProvider: gameProvider,
-                      timeToShow: blacksTimer,
-                    ),
-                  ),
                   const SizedBox(height: 30,),
 
 
@@ -346,63 +383,102 @@ class _GameScreenState extends State<GameScreen> {
                   const SizedBox(height: 30,),
 
                   // our data
-                  Container(
-                    height: 70,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10), // Add rounded corners
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 232, 232, 232),
-                          Color.fromARGB(255, 232, 232, 232),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF00FFE1), // Cyan accent
+                            Color(0xFF3A3A3A), // Dark grey
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromRGBO(25, 25, 25, 1.0),
-                          offset: Offset(7, 7),
-                          blurRadius: 15,
-                        ),
-                        BoxShadow(
-                          color: Color.fromRGBO(60, 60, 60, 1.0),
-                          offset: Offset(-7, -7),
-                          blurRadius: 15,
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        leading: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Color.fromARGB(255, 33, 33, 33), // Set the border color
-                              width: 3.0, // Set the border width
+                      padding: const EdgeInsets.all(2.5),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: isUsersTurn
+                              ? Colors.cyanAccent.withOpacity(0.3)  // Highlight if it's user's turn
+                              : const Color(0xFF000000),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromRGBO(25, 25, 25, 1.0),
+                              offset: Offset(7, 7),
+                              blurRadius: 15,
                             ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundImage: AssetImage(AssetsManager.userIcon),
-                          ),
+                            BoxShadow(
+                              color: Color.fromRGBO(60, 60, 60, 1.0),
+                              offset: Offset(-7, -7),
+                              blurRadius: 15,
+                            ),
+                          ],
                         ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // User Avatar and Name
+                              // inside the user container Row (left side: avatar + name)
+                              Row(
+                                children: [
+                                  // size = 44 because radius 22 * 2
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.white, width: 2.5), // keep your border
+                                    ),
+                                    clipBehavior: Clip.antiAlias,  // ensures circular clipping
+                                    child: Container(
+                                               // background behind transparent PNGs
+                                      child: Image.asset(
+                                        _userAvatarPath ?? AssetsManager.userIcon,
+                                        fit: BoxFit.contain,        // 👈 shows entire image without cropping
+                                        alignment: Alignment.center,
+                                        filterQuality: FilterQuality.high,
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    _userName, // <-- dynamic username from prefs
+                                    style: GoogleFonts.orbitron(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                ],
+                              ),
 
 
-                        title: Text(
-                          'ROOK',
-                          style: GoogleFonts.lato(
-                            color: Color.fromARGB(255, 33, 33, 33),
-                            fontSize: 20,
+                              // Timer
+                              Text(
+                                whitesTimer,
+                                style: GoogleFonts.lato(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  letterSpacing: 1.1,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        trailing: Text(
-                          whitesTimer,
-                          style: GoogleFonts.lato(fontSize: 20, color: Color.fromARGB(255, 33, 33, 33)),
                         ),
                       ),
                     ),
+
                   ),
+
 
 
 
@@ -459,52 +535,76 @@ class _GameScreenState extends State<GameScreen> {
     required String timeToShow,
   }) {
     String opponentImage;
+    String opponentName;
 
     // Select the appropriate image based on the game difficulty level
     switch (gameProvider.gameDifficulty) {
       case GameDifficulty.GRANDEE:
         opponentImage = AssetsManager.grandeeIcon;
+        opponentName = 'Grandee'; // 👈 Add name
         break;
       case GameDifficulty.ARDASHIR:
         opponentImage = AssetsManager.ardashirIcon;
+        opponentName = 'Ardashir'; // 👈 Add name
         break;
       case GameDifficulty.CAISSA:
         opponentImage = AssetsManager.caissaIcon;
+        opponentName = 'Caïssa'; // 👈 Add name
         break;
       default:
         opponentImage = AssetsManager.stockfishIcon;
+        opponentName = 'Stockfish'; // 👈 Add name
     }
-
     gameProvider.vsComputer; {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListTile(
-          leading:Container(
+          leading: Container(
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: Color.fromARGB(255, 33, 33, 33), // Set the border color
-                width: 3.0, // Set the border width
+                color: const Color.fromARGB(255, 33, 33, 33),
+                width: 3.0,
               ),
             ),
-            child: CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage(opponentImage),
+            clipBehavior: Clip.antiAlias,
+            child: ClipOval(
+              child: Container(
+                color: Colors.black,
+                child: Image.asset(
+                  opponentImage,
+                  fit: BoxFit.contain,              // ✅ no zoom/crop
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
             ),
           ),
 
-          title: Text(
-            '${gameProvider.gameDifficulty.name}',
-            style: GoogleFonts.lato(
-              fontSize: 20,
-              color: Color.fromARGB(255, 33, 33, 33),
+          title: Align(
+            alignment: Alignment.centerLeft,        // ← left-align the text
+            child: Text(
+              opponentName,
+              // textAlign: TextAlign.start,        // (optional) also fine
+              style: GoogleFonts.orbitron(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 2,
+                height: 1.3,
+              ),
+              overflow: TextOverflow.ellipsis,      // avoid overflow
+              maxLines: 1,
             ),
           ),
+
+
           trailing: Text(
             timeToShow,
             style: GoogleFonts.lato(
               fontSize:20,
-              color: Color.fromARGB(255, 33, 33, 33),
+              color: Colors.white,
             ),
           ),
         ),

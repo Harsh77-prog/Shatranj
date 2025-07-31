@@ -1,19 +1,15 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shatranj/main_screens/userdetail.dart';
 
 import '../providers/game_provider.dart';
 import '../service/assets_manager.dart';
 import 'about_screen.dart';
-import 'game_time_screen.dart';
-
-void main() {
-  runApp(const MaterialApp(
-    home: HomeScreen(),
-  ));
-}
+import 'homeScreenWidgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late final List<String> _chessFacts;
-  late final Timer _factTimer;
+  Timer? _factTimer;
   int _currentFactIndex = 0;
 
   @override
@@ -47,7 +43,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       'IN CHESS NOTATION, THE FIRST RECORDED GAME DATES BACK TO 1475.',
       'THE "EN PASSANT" RULE, UNIQUE TO CHESS, ALLOWS A PAWN TO CAPTURE AN OPPONENT\'S PAWN IN A SPECIAL WAY.',
     ];
-    _factTimer = Timer.periodic(Duration(seconds: 8), (timer) {
+
+    _factTimer = Timer.periodic(const Duration(seconds: 8), (timer) {
+      if (!mounted) return;
       setState(() {
         _currentFactIndex = (_currentFactIndex + 1) % _chessFacts.length;
       });
@@ -56,302 +54,212 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _factTimer.cancel();
+    _factTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final gameProvider = context.read<GameProvider>();
+    final size = MediaQuery.of(context).size;
+    final responsiveGap = size.height * 0.04; // smaller on short screens
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 33, 33, 33),
-        title: Row(
-          children: [
-            IconButton(
-              icon: const Icon(
-                Icons.notes_rounded,
-                color: Color.fromARGB(255, 232, 232, 232),
-              ),
+      backgroundColor:Colors.black,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+          child: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.black,
+            flexibleSpace: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(color: Colors.black.withOpacity(0.3)),
+            ),
+            leading: IconButton(
+              icon: const Icon(Icons.notes_rounded, color: Colors.white70, size: 26),
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
                   builder: (context) => buildSheet(),
                 );
               },
             ),
-            Spacer(),
-            IconButton(
-              icon: const Icon(
-                Icons.info_outline_rounded,
-                color: Color.fromARGB(255, 232, 232, 232),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.info_outline_rounded, color: Colors.white70, size: 24),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AboutScreen()),
+                  );
+                },
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AboutScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            Material(
-              shape: CircleBorder(),
-              child: Container(
-                width: 120,
-                height:120,
-                decoration: const BoxDecoration(
-                  // shape: BoxShape.circle,
-                  // gradient: LinearGradient(
-                  //   colors: [
-                  //     Color.fromARGB(255, 248, 248, 245).withOpacity(0.9),
-                  //     Color.fromARGB(255, 248, 248, 245).withOpacity(0.6),
-                  //   ],
-                  //   begin: Alignment.topLeft,
-                  //   end: Alignment.bottomRight,
-                  // ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              SizedBox(height: responsiveGap),
+              Material(
+                elevation: 6,
+                shape: const CircleBorder(),
+                child: Container(
+                  width: 130,
+                  height: 130,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [Colors.cyanAccent, Color(0xFF00C4FF)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color.fromARGB(255, 28, 36, 41),
+                      ),
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: AssetImage(AssetsManager.chessIcon),
+                      ),
+                    ),
+                  ),
                 ),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Color.fromARGB(255, 28, 36, 41),
-                  backgroundImage: AssetImage(AssetsManager.chessIcon),
-                ),
               ),
-            ),
-            SizedBox(width: 20),
-            Text(
-              'SHATRANJ',
-              style: GoogleFonts.lato(
-                color: Color.fromARGB(255, 232, 232, 232),
-                fontSize: 60,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: responsiveGap / 2),
+              Column(
+                children: [
+                  Text(
+                    'SHATRANJ',
+                    style: GoogleFonts.lato(
+                      fontSize: 44, // slightly smaller for safety
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2.0,
+                      foreground: Paint()..shader = linearGradient,
+                      shadows: const [
+                        Shadow(blurRadius: 10.0, color: Colors.black54, offset: Offset(2, 2)),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'PROVE YOUR GENIUS',
+                    style: GoogleFonts.lato(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white70,
+                      letterSpacing: 1.5,
+                      shadows: const [
+                        Shadow(blurRadius: 4.0, color: Colors.black38, offset: Offset(1, 1)),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              'PROVE YOUR GENIUS',
-              style: GoogleFonts.lato(
-                color: Color.fromARGB(255, 232, 232, 232),
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 130),
-            Expanded(
-              child: GridView.count(
+              SizedBox(height: responsiveGap),
+              // No Expanded here; GridView is sized to its content
+              GridView.count(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 mainAxisSpacing: 20,
                 childAspectRatio: 3,
                 crossAxisCount: 1,
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 children: [
-                  buildGameType(
-                    label: 'PLAY',
-
+                  GestureDetector(
                     onTap: () {
                       gameProvider.setVsComputer(value: true);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const GameTimeScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => const UserDetailPage()),
                       );
                     },
-                    color: Color.fromARGB(255, 232, 232, 232),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 30, 30, 30),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          const BoxShadow(
+                            color: Colors.cyanAccent,
+                            blurRadius: 20,
+                            spreadRadius: 1,
+                            offset: Offset(0, 0),
+                          ),
+                          BoxShadow(
+                            color: Colors.blueAccent.withOpacity(0.4),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF1F1F1F), Color(0xFF2C2C2C)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Text(
+                        'PLAY',
+                        style: GoogleFonts.orbitron(
+                          color: Colors.white,
+                          fontSize: 24,
+                          letterSpacing: 2.0,
+                          fontWeight: FontWeight.bold,
+                          shadows: const [
+                            Shadow(color: Colors.cyanAccent, blurRadius: 12, offset: Offset(0, 0)),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-            // Add some spacing between the buttons
-
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _chessFacts[_currentFactIndex],
-                style: GoogleFonts.lato(
-                  color: Color.fromARGB(255, 232, 232, 232),
-                  fontSize: 18,
-                  fontStyle: FontStyle.italic,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildGameType({
-    required String label,
-    required VoidCallback onTap,
-    required Color color,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Material(
-        elevation: 10,
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.transparent, // To ensure the Container's color is visible
-        child: Container(
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: const [
-              BoxShadow(
-                color: Color.fromARGB(255, 33, 33, 33),
-                offset: Offset(15, 15),
-                blurRadius: 30,
-              ),
-              BoxShadow(
-                color: Color.fromARGB(255, 33, 33, 33),
-                offset: Offset(-15, -15),
-                blurRadius: 30,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.lato(
-                  color: Color.fromARGB(255, 33, 33, 33),
-                  fontSize: 60, // Adjust font size as needed
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 14),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  _chessFacts[_currentFactIndex],
+                  style: GoogleFonts.lato(
+                    color: Color.fromARGB(255, 232, 232, 232),
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
             ],
           ),
         ),
       ),
     );
   }
-
-
-  Widget buildSheet() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      child: FractionallySizedBox(
-        heightFactor: 0.7, // Set the height to 30% of the screen
-        child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 33, 33, 33),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center, // Center the content
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Text(
-                        'RULES',
-                        style: GoogleFonts.lato(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 232, 232, 232),
-                        ),
-                        textAlign: TextAlign.center, // Center align text
-                      ),
-                    ),
-                    Text(
-                      'OBJECTIVE:',
-                      style: GoogleFonts.lato(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ), // Center align text
-                    ),
-                    Text(
-                      'CHECKMATE YOUR OPPONENT\'S KING.',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ),
-                      textAlign: TextAlign.center, // Center align text
-                    ),
-                    Text(
-                      'SETUP:',
-                      style: GoogleFonts.lato(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ), // Center align text
-                    ),
-                    Text(
-                      '8X8 GRID, EACH PLAYER STARTS WITH 16 PIECES.',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ),
-                      textAlign: TextAlign.center, // Center align text
-                    ),
-                    Text(
-                      'MOVEMENT:',
-                      style: GoogleFonts.lato(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ), // Center align text
-                    ),
-                    Text(
-                      'EACH TYPE OF PIECE HAS ITS OWN MOVEMENT RULES.',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ),
-                      textAlign: TextAlign.center, // Center align text
-                    ),
-                    Text(
-                      'SPECIAL MOVES:',
-                      style: GoogleFonts.lato(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ), // Center align text
-                    ),
-                    Text(
-                      'CASTLING, EN PASSANT, AND PROMOTION.',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ),
-                      textAlign: TextAlign.center,// Center align text
-                    ),
-                    Text(
-                      'ENDGAME:',
-                      style: GoogleFonts.lato(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ), // Center align text
-                    ),
-                    Text(
-                      'CHECKMATE, STALEMATE, OR DRAW BY OTHER MEANS.',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 232, 232, 232), // Set your desired text color
-                      ),
-                      textAlign: TextAlign.center, // Center align text
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-
-
 }
+
+Shader linearGradient = const LinearGradient(
+  colors: <Color>[
+    Color(0xFF004AFF),
+    Color(0xFF00D7FF),
+    Color(0xFFFFFFFF),
+  ],
+).createShader(const Rect.fromLTWH(0.0, 0.0, 300.0, 70.0));

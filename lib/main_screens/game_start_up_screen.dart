@@ -28,9 +28,9 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+        backgroundColor: Colors.black,
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+          backgroundColor: Colors.black,
           automaticallyImplyLeading: false, // Remove the default back arrow
           title: Center(
             child: Row(
@@ -59,89 +59,55 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
-                  Text('PLAY AS',
+                  Text(
+                    'PLAY AS',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.lato(
                       fontWeight: FontWeight.bold,
-                      fontSize: 40,
-                      color: const Color.fromARGB(255, 232, 232, 232),
+                      fontSize: 25,
+                      foreground: Paint()
+                        ..shader = const LinearGradient(
+                          colors: [Colors.blueAccent, Colors.cyanAccent],
+                        ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
                     ),
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 232, 232, 232),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromRGBO(25, 25, 25, 1.0),
-                              offset: Offset(15, 15),
-                              blurRadius: 30,
-                            ),
-                            BoxShadow(
-                              color: Color.fromRGBO(60, 60, 60, 1.0),
-                              offset: Offset(-15, -15),
-                              blurRadius: 30,
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Material(
-                          elevation: 10,
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color.fromARGB(255, 232, 232, 232),
-                                  Color.fromARGB(255, 232, 232, 232),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.all(0.0),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.5,
-                              child: PlayerColorRadioButton(
-                                title: '${PlayerColor.WHITE.name}',
-                                value: PlayerColor.WHITE,
-                                groupValue: gameProvider.playerColor,
-                                onChanged: (value) {
-                                  gameProvider.setPlayerColor(player: 0);
-                                },
-                              ),
+                          margin: const EdgeInsets.all(2.0),
+                          decoration: BoxDecoration(
+                            color: Colors.cyanAccent,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          padding: const EdgeInsets.all(4.0),
+                          child: SizedBox(
+
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: PlayerColorRadioButton(
+                              title: '${PlayerColor.WHITE.name}',
+                              value: PlayerColor.WHITE,
+                              groupValue: gameProvider.playerColor,
+                              onChanged: (value) {
+                                gameProvider.setPlayerColor(player: 0);
+                              },
                             ),
                           ),
                         ),
-                      ),
-                      // Add other widgets here
-
 
                       widget.isCustomTime
                           ? BuildCustomTime(
                         time: whiteTimeInMinutes.toString(),
-                        onLeftArrowClicked: () {
-                          setState(() {
-                            whiteTimeInMinutes--;
-                          });
-                        },
-                        onRightArrowClicked: () {
-                          setState(() {
-                            whiteTimeInMinutes++;
-                          });
-                        },
+                        onLeftArrowClicked: () => setState(() => whiteTimeInMinutes--),
+                        onRightArrowClicked: () => setState(() => whiteTimeInMinutes++),
                       )
                           : Container(
                         height: 40,
                         decoration: BoxDecoration(
                           border: Border.all(
                             width: 1.5,
-                            color: const Color.fromARGB(255, 232, 232, 232),
+                            color: Colors.cyanAccent,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -150,10 +116,9 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
                           child: Center(
                             child: Text(
                               widget.gameTime,
-                              textAlign: TextAlign.center,
                               style: GoogleFonts.lato(
-                                fontSize: 20,
-                                color: const Color.fromARGB(255, 232, 232, 232),
+                                fontSize: 15,
+                                color: Colors.cyanAccent,
                               ),
                             ),
                           ),
@@ -161,19 +126,18 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Material(
-                        elevation: 10,
-                        borderRadius: BorderRadius.circular(100),
-                        child: Container(
+
+                       Container(
+                          margin: const EdgeInsets.all(2.0),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 33, 33, 33),
-                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.cyanAccent,
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                          padding: const EdgeInsets.all(.0),
+                          padding: const EdgeInsets.all(4.0),
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
                             child: PlayerColorRadioButton(
@@ -186,27 +150,19 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
                             ),
                           ),
                         ),
-                      ),
+
                       widget.isCustomTime
                           ? BuildCustomTime(
                         time: blackTimeInMinutes.toString(),
-                        onLeftArrowClicked: () {
-                          setState(() {
-                            blackTimeInMinutes--;
-                          });
-                        },
-                        onRightArrowClicked: () {
-                          setState(() {
-                            blackTimeInMinutes++;
-                          });
-                        },
+                        onLeftArrowClicked: () => setState(() => blackTimeInMinutes--),
+                        onRightArrowClicked: () => setState(() => blackTimeInMinutes++),
                       )
                           : Container(
                         height: 40,
                         decoration: BoxDecoration(
                           border: Border.all(
                             width: 1.5,
-                            color: const Color.fromARGB(255, 232, 232, 232),
+                            color: Colors.cyanAccent,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -215,10 +171,9 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
                           child: Center(
                             child: Text(
                               widget.gameTime,
-                              textAlign: TextAlign.center,
                               style: GoogleFonts.lato(
-                                fontSize: 20,
-                                color: const Color.fromARGB(255, 232, 232, 232),
+                                fontSize: 15,
+                                color: Colors.cyanAccent,
                               ),
                             ),
                           ),
@@ -226,114 +181,98 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: 15,),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      height: 2, // thickness of the divider
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.blueAccent, Colors.cyanAccent],
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+
+
+                  SizedBox(height: 5,),
                   gameProvider.vsComputer
                       ? Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'OPPONENT',
-                          style: GoogleFonts.lato(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 40,
-                            color: const Color.fromARGB(255, 232, 232, 232),
-                          ),
+                      Text(
+                        'OPPONENT',
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                          foreground: Paint()
+                            ..shader = const LinearGradient(
+                              colors: [Colors.blueAccent, Colors.cyanAccent],
+                            ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
                         ),
                       ),
-
-                      const SizedBox(width: 15,),
-
-
-
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              height: 65,
-                              width: MediaQuery.of(context).size.width * 1,
-                              child: GameLevelRadioButton(
-                                title: '         GRANDEE',
-                                value: GameDifficulty.GRANDEE,
-                                groupValue: gameProvider.gameDifficulty,
-                                onChanged: (value) {
-                                  gameProvider.setGameDifficulty(level: 1);
-                                },
-                              ),
+                      const SizedBox(height: 10),
+                      ...[
+                        'GRANDEE',
+                        'ARDASHIR',
+                        'CAÏSSA',
+                      ].asMap().entries.map((entry) {
+                        final index = entry.key + 1;
+                        final name = entry.value;
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: 55,
+                            width: MediaQuery.of(context).size.width,
+                            child: GameLevelRadioButton(
+                              title: '         $name',
+                              value: GameDifficulty.values[index - 1],
+                              groupValue: gameProvider.gameDifficulty,
+                              onChanged: (value) {
+                                gameProvider.setGameDifficulty(level: index);
+                              },
                             ),
                           ),
-                          const SizedBox(height: 10,),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              height: 65,
-                              width: MediaQuery.of(context).size.width * 1,
-                              child: GameLevelRadioButton(
-                                title: '         ARDASHIR',
-                                value: GameDifficulty.ARDASHIR,
-                                groupValue: gameProvider.gameDifficulty,
-                                onChanged: (value) {
-                                  gameProvider.setGameDifficulty(level: 2);
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10,),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              height: 65,
-                              width: MediaQuery.of(context).size.width * 1,
-                              child: GameLevelRadioButton(
-                                title: '            CAÏSSA',
-                                value: GameDifficulty.CAISSA,
-                                groupValue: gameProvider.gameDifficulty,
-                                onChanged: (value) {
-                                  gameProvider.setGameDifficulty(level: 3);
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      }).toList(),
                     ],
                   )
                       : const SizedBox.shrink(),
+
                   const SizedBox(height: 20),
                   gameProvider.isLoading
                       ? const LinearProgressIndicator()
-                      :ElevatedButton(
+                      : ElevatedButton(
                     onPressed: () {
                       playGame(gameProvider: gameProvider);
                     },
                     style: ElevatedButton.styleFrom(
-                      elevation: 10,
-                      backgroundColor: const Color.fromARGB(255, 232, 232, 232), // Change the color here
+                      backgroundColor: Colors.black87, // Dark background
+                      foregroundColor: Colors.cyanAccent,   // Light text
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      textStyle: GoogleFonts.lato(fontSize: 20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        'PLAY',
-                        style: GoogleFonts.lato(
-                          fontSize: 30,
-                          color: const Color.fromARGB(255, 33, 33, 33),
-                          fontWeight: FontWeight.bold,
+                        borderRadius: BorderRadius.circular(16), // Rounded corners
+                        side: BorderSide(
+                          color: Colors.cyanAccent,   // Silver border
+                          width: 2,
                         ),
+                      ),
+                      elevation: 4,
+                    ),
+                    child: Text(
+                      'PLAY',
+                      style: GoogleFonts.lato(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
                 ],
               ),
             );
+
           },
         ));
   }
