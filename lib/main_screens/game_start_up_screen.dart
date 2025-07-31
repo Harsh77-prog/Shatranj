@@ -17,6 +17,7 @@ class GameStartUpScreen extends StatefulWidget {
   final bool isCustomTime;
   final String gameTime;
 
+
   @override
   State<GameStartUpScreen> createState() => _GameStartUpScreenState();
 }
@@ -24,6 +25,7 @@ class GameStartUpScreen extends StatefulWidget {
 class _GameStartUpScreenState extends State<GameStartUpScreen> {
   int whiteTimeInMinutes = 0;
   int blackTimeInMinutes = 0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -278,12 +280,15 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
   }
 
   void playGame({required GameProvider gameProvider}) async {
-
     if (widget.isCustomTime) {
       if (whiteTimeInMinutes <= 0 || blackTimeInMinutes <= 0) {
         showSnackBar(context: context, content: 'Time cannot be 0');
         return;
       }
+
+      final String customTime = '$whiteTimeInMinutes+0'; // or get from increment slider if available
+
+      gameProvider.setSelectedGameTime(customTime); // ✅ Save custom time
 
       gameProvider.setIsLoading(value: true);
 
@@ -296,13 +301,13 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
         if (gameProvider.vsComputer) {
           gameProvider.setIsLoading(value: false);
           Navigator.pushNamed(context, Constants.gameScreen);
-        } else {
-          // search for players
         }
       });
     } else {
-      final String incrementalTime = widget.gameTime.split('+')[1];
       final String gameTime = widget.gameTime.split('+')[0];
+      final String incrementalTime = widget.gameTime.split('+')[1];
+
+      gameProvider.setSelectedGameTime(widget.gameTime); // ✅ Save gameTime like "5+2"
 
       if (incrementalTime != '0') {
         gameProvider.setIncrementalValue(value: int.parse(incrementalTime));
@@ -323,6 +328,7 @@ class _GameStartUpScreenState extends State<GameStartUpScreen> {
       });
     }
   }
+
 }
 
 

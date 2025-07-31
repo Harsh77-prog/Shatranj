@@ -28,17 +28,43 @@ class _GameScreenState extends State<GameScreen> {
   String? _userAvatarPath;
 
   @override
+  @override
+  @override
   void initState() {
+    super.initState();
+
     _loadUserProfile();
     stockfish = Stockfish();
-    final gameProvider = context.read<GameProvider>();
-    gameProvider.resetGame(newGame: false);
 
-    if (mounted) {
-      letOtherPlayerPlayFirst();
-    }
-    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final gameProvider = context.read<GameProvider>();
+
+      // ✅ Parse time from selectedGameTime like "5+2"
+      final timeParts = gameProvider.selectedGameTime.split('+');
+      final baseMinutes = int.tryParse(timeParts[0]) ?? 5;
+      final incrementSeconds = timeParts.length > 1 ? int.tryParse(timeParts[1]) ?? 0 : 0;
+
+
+      // Reset game
+      gameProvider.resetGame(newGame: false);
+
+      // ✅ Initialize clocks with parsed time
+      gameProvider.initializeClocks(
+        baseTime: Duration(minutes: baseMinutes),
+        incrementSeconds: incrementSeconds,
+        context: context,
+        stockfish: stockfish,
+        whiteStarts: true,
+        onNewGame: () {},
+      );
+
+      // If AI goes first
+      if (mounted) {
+        letOtherPlayerPlayFirst();
+      }
+    });
   }
+
 
   @override
   void dispose() {
@@ -66,113 +92,91 @@ class _GameScreenState extends State<GameScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final gameProvider = context.read<GameProvider>();
 
-      if (gameProvider.vsComputer) {
-        if (gameProvider.state.state == PlayState.theirTurn && !gameProvider.aiThinking) {
-          gameProvider.setAiThinking(true);
-
-          await waitUntilReady();
-
-          // Introduce random delay before making the move
-          await Future.delayed(Duration(milliseconds: random.nextInt(500) + 500));
-
-          stockfish.stdin = '${UCICommands.position} ${gameProvider.getPositionFen()}';
-          stockfish.stdin = '${UCICommands.goMoveTime} ${gameProvider.gameLevel * 1000}';
-
-          stockfish.stdout.listen((event) {
-            if (event.contains(UCICommands.bestMove)) {
-              final bestMove = event.split(' ')[1];
-              gameProvider.makeStringMove(bestMove);
-              gameProvider.setAiThinking(false);
-              gameProvider.setSquaresState().whenComplete(() {
-                if (gameProvider.player == Squares.white) {
-                  if (gameProvider.playWhitesTimer) {
-                    gameProvider.pauseBlacksTimer();
-                    startTimer(isWhiteTimer: true, onNewGame: () {});
-                    gameProvider.setPlayWhitesTimer(value: false);
-                  }
-                } else {
-                  if (gameProvider.playBlacksTimer) {
-                    gameProvider.pauseWhitesTimer();
-                    startTimer(isWhiteTimer: false, onNewGame: () {});
-                    gameProvider.setPlayBlactsTimer(value: false);
-                  }
-                }
-              });
-            }
-          });
-        }
-      } else {
-        // Code for other player scenarios
-      }
-    });
-  }
-
-
-  void _onMove(Move move) async {
-    print('move: ${move.toString()}');
-    print('String move: ${move.algebraic()}');
-    final gameProvider = context.read<GameProvider>();
-    bool result = gameProvider.makeSquaresMove(move);
-    if (result) {
-      gameProvider.setSquaresState().whenComplete(() async {
-        if (gameProvider.player == Squares.white) {
-          if (gameProvider.vsComputer) {
-            gameProvider.pauseWhitesTimer();
-            startTimer(isWhiteTimer: false, onNewGame: () {});
-            gameProvider.setPlayWhitesTimer(value: true);
-          }
-        } else {
-          if (gameProvider.vsComputer) {
-            gameProvider.pauseBlacksTimer();
-            startTimer(isWhiteTimer: true, onNewGame: () {});
-            gameProvider.setPlayBlactsTimer(value: true);
-          }
-        }
-      });
-    }
-
-
-
-    if (gameProvider.vsComputer) {
-      if (gameProvider.state.state == PlayState.theirTurn && !gameProvider.aiThinking) {
+      if (gameProvider.vsComputer &&
+          gameProvider.state.state == PlayState.theirTurn &&
+          !gameProvider.aiThinking) {
         gameProvider.setAiThinking(true);
-
         await waitUntilReady();
-
-        // Introduce random delay before making the move
         await Future.delayed(Duration(milliseconds: random.nextInt(500) + 500));
 
         stockfish.stdin = '${UCICommands.position} ${gameProvider.getPositionFen()}';
         stockfish.stdin = '${UCICommands.goMoveTime} ${gameProvider.gameLevel * 1000}';
 
-        stockfish.stdout.listen((event) {
+        try {
+          final event = await stockfish.stdout.firstWhere(
+                (e) => e.contains(UCICommands.bestMove),
+          );
           if (event.contains(UCICommands.bestMove)) {
             final bestMove = event.split(' ')[1];
             gameProvider.makeStringMove(bestMove);
             gameProvider.setAiThinking(false);
-            gameProvider.setSquaresState().whenComplete(() {
-              if (gameProvider.player == Squares.white) {
-                if (gameProvider.playWhitesTimer) {
-                  gameProvider.pauseBlacksTimer();
-                  startTimer(isWhiteTimer: true, onNewGame: () {});
-                  gameProvider.setPlayWhitesTimer(value: false);
-                }
-              } else {
-                if (gameProvider.playBlacksTimer) {
-                  gameProvider.pauseWhitesTimer();
-                  startTimer(isWhiteTimer: false, onNewGame: () {});
-                  gameProvider.setPlayBlactsTimer(value: false);
-                }
-              }
-            });
+            await gameProvider.setSquaresState();
+
+            bool computerIsWhite = gameProvider.player != Squares.white;
+            gameProvider.switchTurns(wasWhiteMove: computerIsWhite);
+
+            gameProvider.gameOverListerner(
+              context: context,
+              stockfish: stockfish,
+              onNewGame: () {},
+            );
           }
-        });
+        } catch (e) {
+          gameProvider.setAiThinking(false);
+        }
+      } else {
+        // other player scenarios
+      }
+    });
+  }
+
+
+
+  void _onMove(Move move) async {
+    final gameProvider = context.read<GameProvider>();
+
+    bool result = gameProvider.makeSquaresMove(move);
+    if (result) {
+      await gameProvider.setSquaresState();
+      // User just moved: if player's color is white, it was white's move
+      bool wasWhiteMove = gameProvider.player == Squares.white;
+      gameProvider.switchTurns(wasWhiteMove: wasWhiteMove);
+    }
+
+    if (gameProvider.vsComputer &&
+        gameProvider.state.state == PlayState.theirTurn &&
+        !gameProvider.aiThinking) {
+      gameProvider.setAiThinking(true);
+      await waitUntilReady();
+      await Future.delayed(Duration(milliseconds: random.nextInt(500) + 500));
+
+      stockfish.stdin = '${UCICommands.position} ${gameProvider.getPositionFen()}';
+      stockfish.stdin = '${UCICommands.goMoveTime} ${gameProvider.gameLevel * 1000}';
+
+      try {
+        final event = await stockfish.stdout.firstWhere(
+              (e) => e.contains(UCICommands.bestMove),
+        );
+        if (event.contains(UCICommands.bestMove)) {
+          final bestMove = event.split(' ')[1];
+          gameProvider.makeStringMove(bestMove);
+          gameProvider.setAiThinking(false);
+          await gameProvider.setSquaresState();
+
+          // Computer moved: computer color is opposite of human player
+          bool computerIsWhite = gameProvider.player != Squares.white;
+          gameProvider.switchTurns(wasWhiteMove: computerIsWhite);
+        }
+      } catch (e) {
+        gameProvider.setAiThinking(false);
       }
     }
 
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
     checkGameOverListener();
   }
+
+
 
   Future<void> waitUntilReady() async {
     while (stockfish.state.value != StockfishState.ready) {
@@ -197,20 +201,15 @@ class _GameScreenState extends State<GameScreen> {
     required Function onNewGame,
   }) {
     final gameProvider = context.read<GameProvider>();
+    // If it's white's timer to run now, that means black just moved (wasWhiteMove = false).
+    // Vice versa.
     if (isWhiteTimer) {
-      gameProvider.startWhitesTimer(
-        context: context,
-        stockfish: stockfish,
-        onNewGame: onNewGame,
-      );
+      gameProvider.switchTurns(wasWhiteMove: false);
     } else {
-      gameProvider.startBlacksTimer(
-        context: context,
-        stockfish: stockfish,
-        onNewGame: onNewGame,
-      );
+      gameProvider.switchTurns(wasWhiteMove: true);
     }
   }
+
 
 
 
